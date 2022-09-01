@@ -6,60 +6,29 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
-    public TMP_Text blueScoreText;
-    public TMP_Text redScoreText;
-    private int blueScore = 0;
-    private int redScore = 0;
+    [SerializeField] private TMP_Text _scoreText;
+    private int _score = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        blueScoreText.text = blueScore.ToString();
-        redScoreText.text = redScore.ToString();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        _scoreText.text = _score.ToString();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (gameObject.name == "BlueWall")
+        if (gameObject.GetComponent<MeshRenderer>().material.color == collision.gameObject.GetComponent<MeshRenderer>().material.color)
         {
-            if (collision.gameObject.CompareTag("blueCube"))
-            {
-                CubeManager.InstantiateCubeList.Remove(collision.gameObject);
-                Destroy(collision.gameObject);
-                blueScore++;
-                blueScoreText.text = blueScore.ToString();
-            }
-            if (collision.gameObject.CompareTag("redCube"))
-            {
-                collision.rigidbody.useGravity = true;
-                collision.rigidbody.AddForce(gameObject.transform.position.x * (-0.3f), 0, 0, ForceMode.Impulse);
-                Draggable.selectedObject = null;
-            }
-
+            CubeManager.InstantiateCubeList.Remove(collision.gameObject);
+            Destroy(collision.gameObject);
+            _score++;
+            _scoreText.text = _score.ToString();
         }
         else
-        if (gameObject.name == "RedWall")
         {
-            if (collision.gameObject.CompareTag("redCube"))
-            {
-                CubeManager.InstantiateCubeList.Remove(collision.gameObject);
-                Destroy(collision.gameObject);
-                redScore++;
-                redScoreText.text = redScore.ToString();
-            }
-            if (collision.gameObject.CompareTag("blueCube"))
-            {
-                collision.rigidbody.useGravity = true;
-                collision.rigidbody.AddForce(gameObject.transform.position.x * (-0.3f), 0, 0, ForceMode.Impulse);
-                Draggable.selectedObject = null;
-            }
+            collision.rigidbody.useGravity = true;
+            collision.rigidbody.AddForce(gameObject.transform.position.x * (-0.3f), 0, 0, ForceMode.Impulse);
+            Draggable.SelectedObject = null;
         }
-        return;
     }
 }

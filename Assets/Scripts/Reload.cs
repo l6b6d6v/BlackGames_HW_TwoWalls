@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class Reload : MonoBehaviour
 {
-    public Button button;
+    [SerializeField] private Button _button;
 
 	void Start()
 	{
 		//Button btn = button.GetComponent<Button>();
-		button.onClick.AddListener(TaskOnClick);
+		_button.onClick.AddListener(TaskOnClick);
 	}
 
 	void TaskOnClick()

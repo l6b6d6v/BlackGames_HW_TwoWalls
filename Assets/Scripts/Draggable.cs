@@ -5,62 +5,62 @@ using UnityEngine.EventSystems;
 
 public class Draggable : MonoBehaviour
 {
-    public static GameObject selectedObject;
-    private GameObject notClickable;
+    public static GameObject SelectedObject;
+    [SerializeField] private float _yMinPos = 0;
+    private Camera _mainCamera;
+
+    private void Awake()
+    {
+        _mainCamera = Camera.main;
+    }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (selectedObject == null)
-            {
-                RaycastHit hit = CastRay();
-                // Bypass invisible wall
-                if (hit.collider.gameObject.CompareTag("notClickable"))
-                {
-                    notClickable = hit.collider.gameObject;
-                    notClickable.GetComponent<Collider>().enabled = false;
-                    hit = CastRay();
-                }
-                if (hit.collider != null)
-                {
-                    if (!hit.collider.CompareTag("redCube") && !hit.collider.CompareTag("blueCube"))
-                    {
-                        notClickable.GetComponent<Collider>().enabled = true;
-                        return;
-                    }
-
-                    selectedObject = hit.collider.gameObject;
-                    Cursor.visible = false;
-                    selectedObject.GetComponent<Rigidbody>().useGravity = false;
-                }
-            }
-        }
-
-        if (selectedObject != null)
-        {
-            notClickable.GetComponent<Collider>().enabled = true;
-            Vector3 position = new (
-                Input.mousePosition.x, 
-                Input.mousePosition.y, 
-                Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
-            selectedObject.transform.position = new Vector3(worldPosition.x, worldPosition.y, worldPosition.z);
-        }
+        if (Input.GetMouseButtonDown(0) && SelectedObject == null)
+            MouseButtonDownLogic();
 
         if (Input.GetMouseButtonUp(0))
-        {
+            MouseButtonUpLogic();
 
-            notClickable.GetComponent<Collider>().enabled = true;
-            if (selectedObject != null)
-            {
-                selectedObject.GetComponent<Rigidbody>().useGravity = true;
-            }
-            selectedObject = null;
-            Cursor.visible = true;
+        if (SelectedObject != null)
+            TransformPositionLogic();
+    }
+
+    private void TransformPositionLogic()
+    {
+        Vector3 position = new(
+            Input.mousePosition.x,
+            Input.mousePosition.y,
+            Camera.main.WorldToScreenPoint(SelectedObject.transform.position).z);
+        Vector3 worldPosition = _mainCamera.ScreenToWorldPoint(position);
+        SelectedObject.GetComponent<Rigidbody>().MovePosition(new Vector3(
+            worldPosition.x,
+            (worldPosition.y < _yMinPos) ? worldPosition.y = _yMinPos + SelectedObject.transform.localScale.y / 2 : worldPosition.y,
+            worldPosition.z));
+    }
+
+    private void MouseButtonDownLogic()
+    {
+        RaycastHit hit = CastRay();
+        if (hit.collider != null)
+        {
+            if (!hit.collider.CompareTag("redCube") && !hit.collider.CompareTag("blueCube"))
+                return;
+
+            SelectedObject = hit.collider.gameObject;
+            Cursor.visible = false;
+            SelectedObject.GetComponent<Rigidbody>().useGravity = false;
         }
     }
 
+    private void MouseButtonUpLogic()
+    {
+        if (SelectedObject != null)
+            SelectedObject.GetComponent<Rigidbody>().useGravity = true;
+
+        SelectedObject = null;
+        Cursor.visible = true;
+    }
 
     private RaycastHit CastRay()
     {

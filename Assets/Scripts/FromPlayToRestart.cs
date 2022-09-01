@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class FromPlayToRestart : MonoBehaviour
 {
-    public GameObject restartCanvas;
+    [SerializeField] private GameObject _restartCanvas;
 
     // Update is called once per frame
     void Update()
@@ -13,7 +13,7 @@ public class FromPlayToRestart : MonoBehaviour
         if (CubeManager.InstantiateCubeList.Count == 0)
         {
             gameObject.SetActive(false);
-            restartCanvas.SetActive(true);
+            _restartCanvas.SetActive(true);
         }
     }
 }

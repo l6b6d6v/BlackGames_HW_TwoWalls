@@ -4,35 +4,33 @@ using UnityEngine;
 
 public class CubeManager : MonoBehaviour
 {
-
-    public Vector2Int RedCubeCountFromTo;
-    public Vector2Int BlueCubeCountFromTo;
-    public GameObject redCubePrefab;
-    public GameObject blueCubePrefab;
-    public GameObject parent;
-    public Transform spawnPoint;
-    public Vector3 volume;
+    [SerializeField] private Vector2Int _redCubeCountFromTo;
+    [SerializeField] private Vector2Int _blueCubeCountFromTo;
+    [SerializeField] private GameObject _redCubePrefab;
+    [SerializeField] private GameObject _blueCubePrefab;
+    [SerializeField] private GameObject _spawnedCubes;
+    [SerializeField] private Transform _spawnPoint;
+    [SerializeField] private Vector3 _volume;
     public static List<GameObject> InstantiateCubeList = new List<GameObject>();
 
     private void Start()
     {
-        CubeSpawn(redCubePrefab, RedCubeCountFromTo);
-        CubeSpawn(blueCubePrefab, BlueCubeCountFromTo);
+        CubeSpawn(_redCubePrefab, _redCubeCountFromTo);
+        CubeSpawn(_blueCubePrefab, _blueCubeCountFromTo);
     }
 
     void CubeSpawn(GameObject prefab, Vector2Int Count)
     {
         int spawnCount = Random.Range(Count.x, Count.y);
-        //GameObject instantiate;
 
         while (spawnCount > 0)
         {
             spawnCount--;
             Vector3 pos = new Vector3(
-                Random.Range(spawnPoint.position.x - volume.x, spawnPoint.position.x + volume.x),
-                Random.Range(spawnPoint.position.y - volume.y, spawnPoint.position.y + volume.y),
-                Random.Range(spawnPoint.position.z - volume.z, spawnPoint.position.z + volume.z));
-            GameObject instantiate = Instantiate(prefab, pos, Quaternion.identity, parent.transform);
+                Random.Range(_spawnPoint.position.x - _volume.x, _spawnPoint.position.x + _volume.x),
+                Random.Range(_spawnPoint.position.y - _volume.y, _spawnPoint.position.y + _volume.y),
+                Random.Range(_spawnPoint.position.z - _volume.z, _spawnPoint.position.z + _volume.z));
+            GameObject instantiate = Instantiate(prefab, pos, Quaternion.identity, _spawnedCubes.transform);
             if (instantiate != null)
             {
                 InstantiateCubeList.Add(instantiate);
